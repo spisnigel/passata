@@ -16,10 +16,10 @@
 
 import sys
 import math
-from PySide import QtUiTools
-from PySide.QtGui import *
-from PySide.QtCore import QTimer
-from PySide.phonon import Phonon
+from PySide6 import QtUiTools
+from PySide6.QtGui import *
+from PySide6.QtCore import QTimer
+from PySide6.QtWidgets import *
 from subprocess import call
 
 class PomodoroApp(QMainWindow):
@@ -80,13 +80,6 @@ class PomodoroApp(QMainWindow):
                 = Phonon.AudioOutput(Phonon.NotificationCategory, self.app)
             Phonon.createPath(self.mediaObject, self.audioOutput)
 
-            volumeSliderReceptacle = \
-                self.window.findChild(QWidget, 'volumeSliderReceptacle')
-            volumeSliderZone = \
-                volumeSliderReceptacle.findChild(QLayout, 'volumeSliderZone')
-            self.volumeSlider = Phonon.VolumeSlider(self.audioOutput)
-            volumeSliderZone.addWidget(self.volumeSlider)
-
         self.pomoImageStack = \
             self.window.findChild(QStackedWidget, 'pomoImageStack')
         self.stackIndex = {}
@@ -135,17 +128,6 @@ class PomodoroApp(QMainWindow):
 
         self.reset()
 
-    def playAlert(self):
-        if self.soundOutput == None:
-            pass
-        elif self.soundOutput == 'phonon':
-            self.mediaObject.play()
-        elif self.soundOutput == 'subprocess':
-            call(["mplayer", self.alertSoundPath])
-        else:
-            raise RuntimeError( \
-                    'Unknown soundOutput: "' + self.soundOutput + '"')
-
     def handleTimeout(self):
         self.elapsedSeconds = self.elapsedSeconds + 1
 
@@ -157,7 +139,6 @@ class PomodoroApp(QMainWindow):
         # Timer has overflowed: Reset.
         self.elapsedSeconds = 0
         self.resetCountersButton.setEnabled(True)
-        self.playAlert()
 
         if self.invertProgress:
             self.progressBar.setValue(0)
@@ -353,7 +334,7 @@ class PomodoroApp(QMainWindow):
 
     def run(self):
         self.window.show()
-        sys.exit(self.app.exec_())
+        sys.exit(self.app.exec())
 
 if __name__ == '__main__':
     pomodoro = PomodoroApp()
